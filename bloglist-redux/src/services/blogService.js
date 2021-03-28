@@ -39,5 +39,4 @@ const deletePost = async id => {
   return axios.delete(`${baseUrl}/${id}`, config);
 };
 
-
 export default { getAll, create, setToken, updatePost, deletePost };

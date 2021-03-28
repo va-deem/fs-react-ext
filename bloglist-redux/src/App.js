@@ -1,13 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Blog from './components/Blog';
+import User from './components/User';
+import UserList from './components/UserList';
 import './App.css';
 import Notification from './components/Notification';
 import CreatePostForm from './components/CreatePostForm';
 import Togglable from './components/Togglable';
 
 import { initializeBlogposts } from './reducers/blogReducer';
-import { loginUser, logoutUser, setUser } from './reducers/userReducer';
+import { loginUser, logoutUser, setUser } from './reducers/authReducer';
+import { setUsers } from './reducers/usersReducer';
 
 const App = () => {
   const currentUser = useSelector(state => state.user);
@@ -30,20 +34,24 @@ const App = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(setUsers());
+  }, [dispatch]);
+
   const handleLogin = async (event) => {
     event.preventDefault();
 
     const user = {
       username: event.target.Username.value,
       password: event.target.Password.value,
-    }
+    };
 
-    dispatch(loginUser(user))
+    dispatch(loginUser(user));
   };
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBloglistUser');
-    dispatch(logoutUser())
+    dispatch(logoutUser());
   };
 
   if (!currentUser) {
@@ -75,18 +83,30 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Notification />
-      <h2>blogs</h2>
-      <p>{currentUser.name} logged-in {currentUser.id}</p>
-      <button onClick={handleLogout}>logout</button>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <CreatePostForm />
-      </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={currentUser} />
-      )}
-    </div>
+    <Router>
+      <div>
+        <Notification />
+        <h2>blogs</h2>
+        <p>{currentUser.name} logged-in {currentUser.id}</p>
+        <button onClick={handleLogout}>logout</button>
+        <Switch>
+          <Route path="/users">
+            <UserList />
+          </Route>
+          <Route path="/user/:id">
+            <User />
+          </Route>
+          <Route path="/">
+            <Togglable buttonLabel="new blog" ref={blogFormRef}>
+              <CreatePostForm />
+            </Togglable>
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} user={currentUser} />
+            )}
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 };
 

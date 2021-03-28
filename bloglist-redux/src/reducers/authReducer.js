@@ -2,7 +2,7 @@ import loginService from '../services/loginService';
 import blogService from '../services/blogService';
 import { setNotification } from './notificationReducer';
 
-const userReducer = (state = null, action) => {
+const authReducer = (state = null, action) => {
   switch (action.type) {
     case 'SET_USER':
       return action.data;
@@ -54,4 +54,4 @@ export const logoutUser = () => {
 };
 
 
-export default userReducer;
+export default authReducer;

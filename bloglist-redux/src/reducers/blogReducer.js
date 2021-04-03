@@ -9,8 +9,12 @@ const blogReducer = (state = [], action) => {
     case 'DELETE_BLOGPOST':
       return state.filter(blog => blog.id !== action.data);
     case 'LIKE_BLOGPOST':
-      return state.map(blog => blog.id === action.data
-        ? { ...blog, likes: blog.likes + 1 }
+      return state.map(blog => blog.id === action.data.id
+        ? { ...blog, likes: action.data.likes }
+        : blog);
+    case 'ADD_COMMENT':
+      return state.map(blog => blog.id === action.data.id
+        ? { ...blog, comments: [...action.data.comments] }
         : blog);
     default:
       return state;
@@ -47,12 +51,22 @@ export const removeBlogpost = (id) => {
   };
 };
 
-export const likeBlogpost = (id) => {
+export const likeBlogpost = (id, update) => {
   return async dispatch => {
-    await blogService.updatePost(id);
+    const updatedPost = await blogService.updatePost(id, update);
     dispatch({
       type: 'LIKE_BLOGPOST',
-      data: id,
+      data: updatedPost,
+    });
+  };
+};
+
+export const addComment = (id, content) => {
+  return async dispatch => {
+    const post = await blogService.createComment(id, content);
+    dispatch({
+      type: 'ADD_COMMENT',
+      data: post,
     });
   };
 };

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Blog from './components/Blog';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import User from './components/User';
 import UserList from './components/UserList';
 import './App.css';
@@ -10,8 +9,10 @@ import CreatePostForm from './components/CreatePostForm';
 import Togglable from './components/Togglable';
 
 import { initializeBlogposts } from './reducers/blogReducer';
-import { loginUser, logoutUser, setUser } from './reducers/authReducer';
+import { loginUser, setUser } from './reducers/authReducer';
 import { setUsers } from './reducers/usersReducer';
+import Blog from './components/Blog';
+import Menu from './components/Menu';
 
 const App = () => {
   const currentUser = useSelector(state => state.user);
@@ -49,11 +50,6 @@ const App = () => {
     dispatch(loginUser(user));
   };
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBloglistUser');
-    dispatch(logoutUser());
-  };
-
   if (!currentUser) {
     return (
       <div>
@@ -86,9 +82,8 @@ const App = () => {
     <Router>
       <div>
         <Notification />
-        <h2>blogs</h2>
-        <p>{currentUser.name} logged-in {currentUser.id}</p>
-        <button onClick={handleLogout}>logout</button>
+        <Menu />
+        <h2>Blog app</h2>
         <Switch>
           <Route path="/users">
             <UserList />
@@ -96,12 +91,16 @@ const App = () => {
           <Route path="/user/:id">
             <User />
           </Route>
+          <Route path="/blogs/:id">
+            <Blog />
+          </Route>
           <Route path="/">
+            <h1>Blogs</h1>
             <Togglable buttonLabel="new blog" ref={blogFormRef}>
               <CreatePostForm />
             </Togglable>
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} user={currentUser} />
+              <p key={blog.id}><Link to={`/blogs/${blog.id}`}>{blog.title}</Link></p>
             )}
           </Route>
         </Switch>

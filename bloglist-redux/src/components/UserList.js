@@ -1,6 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import {
+  UsersTable,
+  NamesTd,
+} from '../styles/styledComponents';
 
 const UserList = () => {
   const users = useSelector(state => state.users);
@@ -12,7 +16,7 @@ const UserList = () => {
   return (
     <div>
       <h1>Users</h1>
-      <table>
+      <UsersTable>
         <thead>
           <tr>
             <th></th>
@@ -21,11 +25,11 @@ const UserList = () => {
         </thead>
         <tbody>
           {users.map(user => <tr key={user.id}>
-            <td><Link to={`/user/${user.id}`}>{user.name}</Link></td>
+            <NamesTd><Link to={`/user/${user.id}`}>{user.name}</Link></NamesTd>
             <td>{user.blogs.length}</td>
           </tr>)}
         </tbody>
-      </table>
+      </UsersTable>
     </div>
   );
 };

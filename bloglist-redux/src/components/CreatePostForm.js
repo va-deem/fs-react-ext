@@ -21,7 +21,7 @@ const CreatePostForm = () => {
 
     if (blogpost.title.length > 0) {
       dispatch(addBlogpost(blogpost));
-      dispatch(setNotification(`you add message '${blogpost.title}'`, 5));
+      dispatch(setNotification(`you added message '${blogpost.title}'`, 5));
     }
   };
 
